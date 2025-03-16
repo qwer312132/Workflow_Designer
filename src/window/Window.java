@@ -20,7 +20,7 @@ public class Window {
         frame.setLayout(new BorderLayout());
         TopBar topbar = new TopBar();
         ButtonBar buttonBar = new ButtonBar();
-        DrawPanel drawPanel = new DrawPanel();
+        DrawPanel drawPanel = new DrawPanel(buttonBar);
         frame.add(topbar, BorderLayout.PAGE_START);
         frame.add(buttonBar, BorderLayout.LINE_START);
         frame.add(drawPanel, BorderLayout.CENTER);
