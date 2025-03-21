@@ -23,6 +23,7 @@ public class ButtonBar extends JPanel {
         for (int i = 0; i < names.length; i++) {
             final int index = i;
             JButton[] buttons = new JButton[names.length];
+//            ImageIcon img = new ImageIcon("src/img/select.png");
             buttons[i] = new JButton(names[i]);
             buttons[i].addActionListener(new ActionListener() {
                 @Override
