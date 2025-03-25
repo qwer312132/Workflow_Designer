@@ -1,7 +1,7 @@
 package src.window;
 
 import src.button.ButtonBar;
-import src.drawPanel.DrawPanel;
+import src.drawPanel.Canvas;
 import src.topbar.TopBar;
 
 import javax.swing.*;
@@ -20,10 +20,10 @@ public class Window {
         frame.setLayout(new BorderLayout());
         TopBar topbar = new TopBar();
         ButtonBar buttonBar = new ButtonBar();
-        DrawPanel drawPanel = new DrawPanel(buttonBar);
+        Canvas canvas = new Canvas(buttonBar);
         frame.add(topbar, BorderLayout.PAGE_START);
         frame.add(buttonBar, BorderLayout.LINE_START);
-        frame.add(drawPanel, BorderLayout.CENTER);
+        frame.add(canvas, BorderLayout.CENTER);
         // 显示窗口
         frame.pack();
         frame.setVisible(true);

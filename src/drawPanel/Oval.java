@@ -11,5 +11,7 @@ public class Oval extends BasicObject{
 
     public Oval(int x, int y){
         super(x, y);
+        setX2(x+100);
+        setY2(y+50);
     }
 }
