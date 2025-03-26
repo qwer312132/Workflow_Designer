@@ -1,4 +1,4 @@
-package src.drawPanel;
+package src.canvas.object;
 
 import java.awt.*;
 
@@ -6,7 +6,7 @@ public class Rect extends BasicObject{
     @Override
     public void draw(Graphics2D g) {
         g.setColor(new Color(100, 100, 100));
-        g.drawRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
+        g.fillRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
     }
 
     public Rect(int x, int y){

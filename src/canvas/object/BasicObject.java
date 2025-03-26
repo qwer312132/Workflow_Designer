@@ -1,9 +1,10 @@
-package src.drawPanel;
+package src.canvas.object;
 
 import java.awt.*;
 
 public abstract  class BasicObject {
     public int x1, x2, y1, y2;
+    public boolean isSelected;
     public abstract void draw(Graphics2D g);
     public boolean isClicked(int x, int y){
         return this.x1 <= x && this.x2 >= x && this.y1 <= y && this.y2 >= y;
@@ -24,6 +25,7 @@ public abstract  class BasicObject {
     public BasicObject(int x, int y){
         setX1(x);
         setY1(y);
+        isSelected = false;
     }
     public int getUpperLeftX() {
         return Math.min(x1, x2);

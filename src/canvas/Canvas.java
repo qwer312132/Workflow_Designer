@@ -1,8 +1,11 @@
-package src.drawPanel;
+package src.canvas;
 
 import src.button.ButtonBar;
 import src.button.ButtonConstant.ButtonState;
 import src.button.ButtonStateListener;
+import src.canvas.object.BasicObject;
+import src.canvas.object.Oval;
+import src.canvas.object.Rect;
 
 import javax.swing.*;
 import java.awt.*;

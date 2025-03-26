@@ -1,7 +1,7 @@
 package src.window;
 
 import src.button.ButtonBar;
-import src.drawPanel.Canvas;
+import src.canvas.Canvas;
 import src.topbar.TopBar;
 
 import javax.swing.*;
