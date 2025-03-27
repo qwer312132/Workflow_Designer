@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class ConnectPoint {
     int x, y;
-
+    int size = 5;
     public int getX() {
         return x;
     }
@@ -26,9 +26,13 @@ public class ConnectPoint {
         this.x = x;
     }
 
+    public boolean isIn(int x, int y){
+        return getX()-size <= x && getX()+size >= x && getY()-size <= y && getY()+size >= y;
+    }
+
     public void draw(Graphics2D g) {
         g.setColor(new Color(0, 0, 0));
-        g.fillRect(x-5, y-5, 10, 10);
+        g.fillRect(x-size, y-size, 10, 10);
     }
 
     public void move(int x, int y){

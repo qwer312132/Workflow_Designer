@@ -3,10 +3,9 @@ package src.canvas;
 import src.button.ButtonBar;
 import src.button.ButtonConstant.ButtonState;
 import src.button.ButtonStateListener;
-import src.canvas.object.BasicObject;
-import src.canvas.object.Oval;
-import src.canvas.object.Rect;
-import src.canvas.object.PreviewSelect;
+import src.canvas.link.Association;
+import src.canvas.link.Link;
+import src.canvas.object.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,9 +18,11 @@ public class Canvas extends JPanel implements ButtonStateListener {
     private final JLabel test;
     private ButtonState curButtonState;
     private PreviewSelect previewSelect;
+    private Link previewLink;
     private boolean isSelecting;
     private final ArrayList<Integer> selecting = new ArrayList<>();
     private final ArrayList<BasicObject> basicObjects = new ArrayList<>();
+    private final ArrayList<Link> links = new ArrayList<>();
 
     public Canvas(ButtonBar buttonBar) {
         setBackground(Color.WHITE);
@@ -55,6 +56,9 @@ public class Canvas extends JPanel implements ButtonStateListener {
         if(previewSelect != null && !isSelecting) {
             previewSelect.draw(g2);
         }
+        if(previewLink!=null){
+            previewLink.draw(g2);
+        }
         g.drawImage(image, 0, 0, null);
     }
 
@@ -86,6 +90,15 @@ public class Canvas extends JPanel implements ButtonStateListener {
                     }
                 }
             }
+            else if(curButtonState == ButtonState.ASSOCIATION){
+                x1 = e.getX();
+                y1 = e.getY();
+                for(BasicObject basicObject:basicObjects){
+                    if(basicObject.inConnectPoint(x1, y1)!=null){
+                        previewLink = new Association(basicObject.inConnectPoint(x1, y1), basicObject.inConnectPoint(x1, y1));
+                    }
+                }
+            }
             repaint();
         }
         public void mouseDragged(MouseEvent e){
@@ -102,6 +115,9 @@ public class Canvas extends JPanel implements ButtonStateListener {
                     y1 = y2;
                 }
             }
+            if(curButtonState == ButtonState.ASSOCIATION){
+                previewLink.setEnd(new ConnectPoint(x2, y2));
+            }
             repaint();
         }
         public void mouseReleased(MouseEvent e){
@@ -115,6 +131,7 @@ public class Canvas extends JPanel implements ButtonStateListener {
                 }
             }
             previewSelect = null;
+            previewLink = null;
             selecting.clear();
             repaint();
         }

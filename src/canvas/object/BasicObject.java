@@ -68,4 +68,13 @@ public abstract  class BasicObject {
         }
     }
 
+    public ConnectPoint inConnectPoint(int x, int y){
+        for(ConnectPoint connectPoint:connectPointList){
+            if(connectPoint.isIn(x, y)){
+                return connectPoint;
+            }
+        }
+        return null;
+    }
+
 }
