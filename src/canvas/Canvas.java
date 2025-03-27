@@ -6,6 +6,7 @@ import src.button.ButtonStateListener;
 import src.canvas.object.BasicObject;
 import src.canvas.object.Oval;
 import src.canvas.object.Rect;
+import src.canvas.object.PreviewSelect;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +18,9 @@ import java.util.ArrayList;
 public class Canvas extends JPanel implements ButtonStateListener {
     private final JLabel test;
     private ButtonState curButtonState;
-    private BasicObject currentBasicObject;
+    private PreviewSelect previewSelect;
+    private boolean isSelecting;
+    private final ArrayList<Integer> selecting = new ArrayList<>();
     private final ArrayList<BasicObject> basicObjects = new ArrayList<>();
 
     public Canvas(ButtonBar buttonBar) {
@@ -25,6 +28,7 @@ public class Canvas extends JPanel implements ButtonStateListener {
         test = new JLabel();
         test.setText(buttonBar.getButtonState().toString());
         curButtonState = buttonBar.getButtonState();
+        isSelecting = false;
         this.add(test);
         MouseHandler mouseHandler = new MouseHandler();
         addMouseListener(mouseHandler);
@@ -48,8 +52,8 @@ public class Canvas extends JPanel implements ButtonStateListener {
         for(BasicObject basicObject : basicObjects) {
             basicObject.draw(g2);
         }
-        if(currentBasicObject != null) {
-            currentBasicObject.draw(g2);
+        if(previewSelect != null && !isSelecting) {
+            previewSelect.draw(g2);
         }
         g.drawImage(image, 0, 0, null);
     }
@@ -67,10 +71,18 @@ public class Canvas extends JPanel implements ButtonStateListener {
             else if(curButtonState == ButtonState.SELECT){
                 x1 = e.getX();
                 y1 = e.getY();
-                currentBasicObject = new Rect(x1, y1, x1, y1);
-                for(BasicObject basicObject:basicObjects){
+                previewSelect = new PreviewSelect(x1, y1, x1, y1);
+                isSelecting = false;
+                for(int i = 0; i < basicObjects.size(); i++){
+                    BasicObject basicObject = basicObjects.get(i);
                     if(basicObject.isClicked(e.getX(), e.getY())){
                         System.out.println("click");
+                        basicObject.isSelected = true;
+                        isSelecting = true;
+                        selecting.add(i);
+                    }
+                    else{
+                        basicObject.isSelected = false;
                     }
                 }
             }
@@ -80,8 +92,15 @@ public class Canvas extends JPanel implements ButtonStateListener {
             x2 = e.getX();
             y2 = e.getY();
             if(curButtonState == ButtonState.SELECT){
-                ((Rect)currentBasicObject).setX2(x2);
-                ((Rect)currentBasicObject).setY2(y2);
+                previewSelect.setX2(x2);
+                previewSelect.setY2(y2);
+                if(isSelecting){
+                    for(Integer i : selecting){
+                        basicObjects.get(i).move(x2 - x1, y2- y1);
+                    }
+                    x1 = x2;
+                    y1 = y2;
+                }
             }
             repaint();
         }
@@ -95,7 +114,8 @@ public class Canvas extends JPanel implements ButtonStateListener {
                     }
                 }
             }
-            currentBasicObject = null;
+            previewSelect = null;
+            selecting.clear();
             repaint();
         }
     }
