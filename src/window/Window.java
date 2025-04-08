@@ -2,6 +2,7 @@ package src.window;
 
 import src.button.ButtonBar;
 import src.canvas.Canvas;
+import src.topbar.EditObjectCommand;
 import src.topbar.GroupCommand;
 import src.topbar.TopBar;
 import src.topbar.UngroupCommand;
@@ -23,6 +24,7 @@ public class Window {
         ButtonBar buttonBar = new ButtonBar();
         Canvas canvas = new Canvas(buttonBar);
         TopBar topbar = new TopBar();
+        topbar.registerCommand("editLabel", new EditObjectCommand(canvas));
         topbar.registerCommand("groupSelected", new GroupCommand(canvas));
         topbar.registerCommand("ungroupSelected", new UngroupCommand(canvas));
         frame.add(topbar, BorderLayout.PAGE_START);

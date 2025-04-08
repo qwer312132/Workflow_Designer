@@ -23,7 +23,7 @@ public class TopBar extends JPanel {
         JPopupMenu popupMenu = new JPopupMenu();
 
         // 動態加選單項目
-        addMenuItem(popupMenu, "顯示對話框", "showDialog");
+        addMenuItem(popupMenu, "edit label", "editLabel");
         addMenuItem(popupMenu, "group", "groupSelected");
         addMenuItem(popupMenu, "ungroup", "ungroupSelected");
 

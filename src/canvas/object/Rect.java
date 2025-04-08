@@ -2,6 +2,7 @@ package src.canvas.object;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Rect extends BasicObject{
     @Override
@@ -12,6 +13,22 @@ public class Rect extends BasicObject{
             for(ConnectPoint connectPoint : connectPointList){
                 connectPoint.draw(g);
             }
+        }
+        if(!Objects.equals(getLabelText(), "")){
+            if(getLabelType() == LabelType.RECT){
+                g.setColor(getLabelColor());
+                g.fillRect(getUpperLeftX()+5, getUpperLeftY()+35, getWidth()-10, 30);
+                g.setColor(Color.BLACK);
+                g.drawRect(getUpperLeftX()+5, getUpperLeftY()+35, getWidth()-10, 30);
+            }
+            else if(getLabelType() == LabelType.OVAL){
+                g.setColor(getLabelColor());
+                g.fillOval(getUpperLeftX()+5, getUpperLeftY()+35, getWidth()-10, 30);
+                g.setColor(Color.BLACK);
+                g.drawOval(getUpperLeftX()+5, getUpperLeftY()+35, getWidth()-10, 30);
+            }
+            g.setFont(new Font("Arial", Font.BOLD, getLabelSize()));
+            g.drawString(getLabelText(), getUpperLeftX()+15, getUpperLeftY()+50);
         }
     }
 
