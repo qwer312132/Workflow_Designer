@@ -7,13 +7,11 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 
-public class Association extends Link{
-
-    public Association(ConnectPoint start, ConnectPoint end) {
+public class Composition extends Link{
+    public Composition(ConnectPoint start, ConnectPoint end) {
         super(start, end);
     }
 
-    @Override
     public void draw(Graphics2D g) {
         g.draw(new Line2D.Double(start.getX(), start.getY(), end.getX(), end.getY()));
         double angle = Math.atan2(end.getY() - start.getY(), end.getX() - start.getX());
@@ -24,9 +22,14 @@ public class Association extends Link{
         g.translate(x, y);
         g.rotate(angle - Math.PI / 2);
         Path2D.Double arrowHead = new Path2D.Double();
-        arrowHead.moveTo(-size, -size);
-        arrowHead.lineTo(0, 0);
+        arrowHead.moveTo(0, 0);
+        arrowHead.lineTo(-size, -size);
+        arrowHead.lineTo(0, -2 * size);
         arrowHead.lineTo(size, -size);
+        arrowHead.closePath();
+        g.setColor(Color.WHITE);
+        g.fill(arrowHead);
+        g.setColor(Color.BLACK);
         g.draw(arrowHead);
         g.setTransform(tx);
     }

@@ -8,15 +8,15 @@ public class Rect extends BasicObject{
     public void draw(Graphics2D g) {
         g.setColor(new Color(100, 100, 100));
         g.fillRect(getUpperLeftX(), getUpperLeftY(), getWidth(), getHeight());
-        if(isSelected){
+        if(isSelected()){
             for(ConnectPoint connectPoint : connectPointList){
                 connectPoint.draw(g);
             }
         }
     }
 
-    public Rect(int x, int y){
-        super(x, y);
+    public Rect(int x, int y, int id){
+        super(x, y, id);
         setX2(x+100);
         setY2(y+100);
         connectPointList = new ArrayList<>();

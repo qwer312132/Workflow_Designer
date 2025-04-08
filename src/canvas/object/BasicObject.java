@@ -5,7 +5,18 @@ import java.util.ArrayList;
 
 public abstract  class BasicObject {
     private int x1, x2, y1, y2;
-    public boolean isSelected;
+    private boolean isSelected;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    private int id;
+    private CompositeObject composite;
     public ArrayList<ConnectPoint> connectPointList;
     public abstract void draw(Graphics2D g);
     public int getX1() {return x1;}
@@ -22,6 +33,14 @@ public abstract  class BasicObject {
         return this.x1 <= x && this.x2 >= x && this.y1 <= y && this.y2 >= y;
     }
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
     public boolean isBoxed(int x1, int y1, int x2, int y2){
         if(x2 < x1){
             int temp = x1;
@@ -36,9 +55,12 @@ public abstract  class BasicObject {
         return x1 <= getX1() &&  x2 >= getX2() && y1 <= getY1() && y2 >= getY2();
     }
 
-    public BasicObject(int x, int y){
+    public BasicObject(int x, int y, int id){
         setX1(x);
         setY1(y);
+        setId(id);
+        this.composite = new CompositeObject();
+        this.composite.setOwner(this);
         isSelected = false;
     }
 
@@ -77,4 +99,13 @@ public abstract  class BasicObject {
         return null;
     }
 
+
+    public void setComposite(CompositeObject composite) {
+        this.composite = composite;
+        composite.setOwner(this);
+    }
+
+    public CompositeObject getComposite() {
+        return composite;
+    }
 }

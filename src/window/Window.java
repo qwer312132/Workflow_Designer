@@ -2,7 +2,9 @@ package src.window;
 
 import src.button.ButtonBar;
 import src.canvas.Canvas;
+import src.topbar.GroupCommand;
 import src.topbar.TopBar;
+import src.topbar.UngroupCommand;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,9 +20,11 @@ public class Window {
         frame.setPreferredSize(new Dimension(800, 600));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        TopBar topbar = new TopBar();
         ButtonBar buttonBar = new ButtonBar();
         Canvas canvas = new Canvas(buttonBar);
+        TopBar topbar = new TopBar();
+        topbar.registerCommand("groupSelected", new GroupCommand(canvas));
+        topbar.registerCommand("ungroupSelected", new UngroupCommand(canvas));
         frame.add(topbar, BorderLayout.PAGE_START);
         frame.add(buttonBar, BorderLayout.LINE_START);
         frame.add(canvas, BorderLayout.CENTER);

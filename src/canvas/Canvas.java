@@ -4,7 +4,9 @@ import src.button.ButtonBar;
 import src.button.ButtonConstant.ButtonState;
 import src.button.ButtonStateListener;
 import src.canvas.link.Association;
+import src.canvas.link.Composition;
 import src.canvas.link.Link;
+import src.canvas.link.Generalization;
 import src.canvas.object.*;
 
 import javax.swing.*;
@@ -13,6 +15,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Canvas extends JPanel implements ButtonStateListener {
     private final JLabel test;
@@ -20,7 +24,7 @@ public class Canvas extends JPanel implements ButtonStateListener {
     private PreviewSelect previewSelect;
     private Link previewLink;
     private boolean isSelecting;
-    private final ArrayList<Integer> selecting = new ArrayList<>();
+    private final ArrayList<CompositeObject> selecting = new ArrayList<>();
     private final ArrayList<BasicObject> basicObjects = new ArrayList<>();
     private final ArrayList<Link> links = new ArrayList<>();
 
@@ -38,6 +42,9 @@ public class Canvas extends JPanel implements ButtonStateListener {
         buttonBar.addButtonStateListener(this);
     }
 
+    public ArrayList<CompositeObject> getSelectedObjects() {
+        return new ArrayList<>(selecting);
+    }
     // **當 ButtonBar 狀態變更時，這個方法會被呼叫**
     @Override
     public void onButtonStateChanged(ButtonState newState) {
@@ -53,6 +60,9 @@ public class Canvas extends JPanel implements ButtonStateListener {
         for(BasicObject basicObject : basicObjects) {
             basicObject.draw(g2);
         }
+        for(Link link : links){
+            link.draw(g2);
+        }
         if(previewSelect != null && !isSelecting) {
             previewSelect.draw(g2);
         }
@@ -67,28 +77,28 @@ public class Canvas extends JPanel implements ButtonStateListener {
         private int x1, x2, y1, y2;
         public void mousePressed(MouseEvent e) {
             if(curButtonState == ButtonState.RECT){
-                basicObjects.add(new Rect(e.getX(), e.getY()));
+                basicObjects.add(new Rect(e.getX(), e.getY(), basicObjects.size()));
             }
             else if(curButtonState == ButtonState.OVAL){
-                basicObjects.add(new Oval(e.getX(), e.getY()));
+                basicObjects.add(new Oval(e.getX(), e.getY(), basicObjects.size()));
             }
             else if(curButtonState == ButtonState.SELECT){
                 x1 = e.getX();
                 y1 = e.getY();
                 previewSelect = new PreviewSelect(x1, y1, x1, y1);
+                selecting.clear();
                 isSelecting = false;
-                for(int i = 0; i < basicObjects.size(); i++){
-                    BasicObject basicObject = basicObjects.get(i);
+                for(BasicObject basicObject : basicObjects){
                     if(basicObject.isClicked(e.getX(), e.getY())){
-                        System.out.println("click");
-                        basicObject.isSelected = true;
                         isSelecting = true;
-                        selecting.add(i);
+                        selecting.add(basicObject.getComposite().getRoot());
                     }
                     else{
-                        basicObject.isSelected = false;
+                        basicObject.setSelected(false);
                     }
                 }
+                if(selecting.size()==1)
+                    selecting.getFirst().select();
             }
             else if(curButtonState == ButtonState.ASSOCIATION){
                 x1 = e.getX();
@@ -96,6 +106,24 @@ public class Canvas extends JPanel implements ButtonStateListener {
                 for(BasicObject basicObject:basicObjects){
                     if(basicObject.inConnectPoint(x1, y1)!=null){
                         previewLink = new Association(basicObject.inConnectPoint(x1, y1), basicObject.inConnectPoint(x1, y1));
+                    }
+                }
+            }
+            else if(curButtonState == ButtonState.GENERALIZATION){
+                x1 = e.getX();
+                y1 = e.getY();
+                for(BasicObject basicObject:basicObjects){
+                    if(basicObject.inConnectPoint(x1, y1)!=null){
+                        previewLink = new Generalization(basicObject.inConnectPoint(x1, y1), basicObject.inConnectPoint(x1, y1));
+                    }
+                }
+            }
+            else if(curButtonState == ButtonState.COMPOSITION){
+                x1 = e.getX();
+                y1 = e.getY();
+                for(BasicObject basicObject:basicObjects){
+                    if(basicObject.inConnectPoint(x1, y1)!=null){
+                        previewLink = new Composition(basicObject.inConnectPoint(x1, y1), basicObject.inConnectPoint(x1, y1));
                     }
                 }
             }
@@ -108,14 +136,14 @@ public class Canvas extends JPanel implements ButtonStateListener {
                 previewSelect.setX2(x2);
                 previewSelect.setY2(y2);
                 if(isSelecting){
-                    for(Integer i : selecting){
-                        basicObjects.get(i).move(x2 - x1, y2- y1);
+                    for(CompositeObject compositeObject : selecting){
+                        compositeObject.move(x2 - x1, y2- y1);
                     }
                     x1 = x2;
                     y1 = y2;
                 }
             }
-            if(curButtonState == ButtonState.ASSOCIATION){
+            else if(curButtonState == ButtonState.ASSOCIATION || curButtonState == ButtonState.GENERALIZATION || curButtonState == ButtonState.COMPOSITION){
                 previewLink.setEnd(new ConnectPoint(x2, y2));
             }
             repaint();
@@ -124,15 +152,49 @@ public class Canvas extends JPanel implements ButtonStateListener {
             x2 = e.getX();
             y2 = e.getY();
             if(curButtonState == ButtonState.SELECT){
+                if(selecting.size()==1)
+                    return;
+                Set<CompositeObject> selectingSet = new HashSet<>();
+                selecting.clear();
                 for(BasicObject basicObject:basicObjects){
                     if(basicObject.isBoxed(x1, y1, x2, y2)){
-                        System.out.println("box");
+                        selectingSet.add(basicObject.getComposite().getRoot());
+                    }
+                }
+                for(CompositeObject compositeObject : selectingSet){
+                    compositeObject.select();
+                    selecting.add(compositeObject);
+                }
+            }
+            else if(curButtonState == ButtonState.ASSOCIATION){
+                x2 = e.getX();
+                y2 = e.getY();
+                for(BasicObject basicObject:basicObjects){
+                    if(basicObject.inConnectPoint(x2, y2)!=null){
+                        links.add(new Association(previewLink.getStart(), basicObject.inConnectPoint(x2, y2)));
+                    }
+                }
+            }
+            else if(curButtonState == ButtonState.GENERALIZATION){
+                x2 = e.getX();
+                y2 = e.getY();
+                for(BasicObject basicObject:basicObjects){
+                    if(basicObject.inConnectPoint(x2, y2)!=null){
+                        links.add(new Generalization(previewLink.getStart(), basicObject.inConnectPoint(x2, y2)));
+                    }
+                }
+            }
+            else if(curButtonState == ButtonState.COMPOSITION){
+                x2 = e.getX();
+                y2 = e.getY();
+                for(BasicObject basicObject:basicObjects){
+                    if(basicObject.inConnectPoint(x2, y2)!=null){
+                        links.add(new Composition(previewLink.getStart(), basicObject.inConnectPoint(x2, y2)));
                     }
                 }
             }
             previewSelect = null;
             previewLink = null;
-            selecting.clear();
             repaint();
         }
     }

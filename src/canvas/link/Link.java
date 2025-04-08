@@ -7,6 +7,14 @@ import java.awt.*;
 public abstract class Link {
     ConnectPoint start, end;
 
+    public ConnectPoint getStart() {
+        return start;
+    }
+
+    public ConnectPoint getEnd() {
+        return end;
+    }
+
     public Link(ConnectPoint start, ConnectPoint end) {
         this.start = start;
         this.end = end;
