@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Canvas extends JPanel implements ButtonStateListener {
-    private final JLabel test;
     private ButtonState curButtonState;
     private PreviewSelect previewSelect;
     private Link previewLink;
@@ -30,11 +29,8 @@ public class Canvas extends JPanel implements ButtonStateListener {
 
     public Canvas(ButtonBar buttonBar) {
         setBackground(Color.WHITE);
-        test = new JLabel();
-        test.setText(buttonBar.getButtonState().toString());
         curButtonState = buttonBar.getButtonState();
         isSelecting = false;
-        this.add(test);
         MouseHandler mouseHandler = new MouseHandler();
         addMouseListener(mouseHandler);
         addMouseMotionListener(mouseHandler);
@@ -48,7 +44,6 @@ public class Canvas extends JPanel implements ButtonStateListener {
     // **當 ButtonBar 狀態變更時，這個方法會被呼叫**
     @Override
     public void onButtonStateChanged(ButtonState newState) {
-        test.setText(newState.toString()); // 更新 JLabel 顯示
         curButtonState = newState;
         repaint();
     }

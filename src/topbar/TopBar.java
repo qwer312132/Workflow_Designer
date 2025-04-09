@@ -11,7 +11,7 @@ public class TopBar extends JPanel {
     private final Map<String, MenuCommand> commands = new HashMap<>();
 
     public TopBar() {
-        this.setLayout(new FlowLayout());
+        this.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.setBackground(Color.GRAY);
 
         JLabel fileLabel = new JLabel("File");
