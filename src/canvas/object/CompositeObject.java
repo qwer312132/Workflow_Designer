@@ -68,6 +68,13 @@ public class CompositeObject {
         }
     }
 
+    public void unselect(){
+        ArrayList<CompositeObject> compositeObjects = getAllMembers();
+        for(CompositeObject compositeObject:compositeObjects){
+            compositeObject.getOwner().setSelected(false);
+        }
+    }
+
     public void ungroup(){
         for(CompositeObject compositeObject:this.children){
             compositeObject.setParent(null);

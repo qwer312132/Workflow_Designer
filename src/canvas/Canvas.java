@@ -97,8 +97,16 @@ public class Canvas extends JPanel implements ButtonStateListener {
                         basicObject.setSelected(false);
                     }
                 }
-                if(selecting.size()==1)
-                    selecting.getFirst().select();
+                if(selecting.size()>0){
+                    CompositeObject temp = selecting.getLast();
+                    for(int i = 0; i < selecting.size()-1; i++){
+                        selecting.get(i).unselect();
+                    }
+                    selecting.clear();
+                    selecting.add(temp);
+                    temp.select();
+                }
+
             }
             else if(curButtonState == ButtonState.ASSOCIATION){
                 x1 = e.getX();
@@ -143,7 +151,7 @@ public class Canvas extends JPanel implements ButtonStateListener {
                     y1 = y2;
                 }
             }
-            else if(curButtonState == ButtonState.ASSOCIATION || curButtonState == ButtonState.GENERALIZATION || curButtonState == ButtonState.COMPOSITION){
+            else if((curButtonState == ButtonState.ASSOCIATION || curButtonState == ButtonState.GENERALIZATION || curButtonState == ButtonState.COMPOSITION)&&previewLink!=null){
                 previewLink.setEnd(new ConnectPoint(x2, y2));
             }
             repaint();
